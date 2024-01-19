@@ -1,6 +1,7 @@
 import express, { Request, Response, Application } from "express";
 import dotenv from "dotenv";
 import { router } from "./routes";
+import cors from "cors";
 import { initDB } from "./mongo-config";
 
 //For env File
@@ -13,10 +14,14 @@ export const port = process.env.PORT || 8000;
 
 // if(!url || !dbName){
 //   console.log('there are missing env variables')
-//   process.exit() 
+//   process.exit()
 // }
 
 // initDB(url,dbName) // conect to the db
+
+//cors
+app.use(cors());
+
 app.use(router); // use the router
 
 app.listen(port, () => {

@@ -5,7 +5,7 @@ import { v4 as uuidV4 } from "uuid";
 import path from "path";
 import { port } from "../app";
 
-export const getImages = async (req: Request, res: Response) => {
+export const getImage = async (req: Request, res: Response) => {
   const imageName = req.params.image;
 
   // Use path.join to construct the full path to the image
@@ -24,13 +24,18 @@ export const getImages = async (req: Request, res: Response) => {
   });
 };
 
-export const saveImages = async (req: Request, res: Response) => {
+/**
+ * allow to save 1 image
+ * @param = image
+ */
+
+export const saveImage = async (req: Request, res: Response) => {
   try {
     const file = req.files?.image as UploadedFile;
     const uuid = uuidV4();
     const extension = file.mimetype.split("/")[1];
 
-    const folderPath = path.join(__dirname, "../uploads")    
+    const folderPath = path.join(__dirname, "../uploads");
     if (!fs.existsSync(folderPath)) {
       fs.mkdirSync(folderPath, { recursive: true });
     }
@@ -54,9 +59,30 @@ export const saveImages = async (req: Request, res: Response) => {
       });
     });
   } catch (error: unknown) {
+    console.log(error);
     res.status(500).json({
       error: true,
-      message: "image save successfully",
+      message: "ups something wnet worng",
+      data: null,
+    });
+  }
+};
+
+export const removeImage = async (req: Request, res: Response) => {
+  try {
+    const imageName = req.params.image;
+    const pathDir = path.join(__dirname, "../uploads", imageName);
+    fs.unlinkSync(pathDir);
+
+    res.status(200).json({
+      error: false,
+      message: "image removed sucessfully",
+      data: { imageName },
+    });
+  } catch (error: unknown) {
+    res.status(500).json({
+      error: true,
+      message: "ups something went worng",
       data: null,
     });
   }
